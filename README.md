@@ -7,6 +7,18 @@
 - **Frontend:** Vite + React + TypeScript, hand-rolled CSS (Space Grotesk, electric blue `#2b4bff`)
 - **Backend:** Supabase (project ref `zxwcbctqsvxkdouqldmr`, eu-west-2) — Postgres + RLS, Auth, Realtime, Storage
 
+## Live site
+
+**https://harryw-developer.github.io/handoff/** — hosted on GitHub Pages from the `gh-pages` branch of [harryw-developer/handoff](https://github.com/harryw-developer/handoff).
+
+To publish any change:
+
+```bash
+npm run deploy
+```
+
+(builds the site and pushes it to the `gh-pages` branch; live a minute later)
+
 ## Run it
 
 ```bash
