@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && cp dist/index.html dist/404.html",
+    "deploy": "sh scripts/deploy.sh",
     "lint": "oxlint",
     "preview": "vite preview"
   },
