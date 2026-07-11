@@ -22,6 +22,14 @@ export const LOADING_LINES = [
   'turning it off and on again…',
 ]
 
+export const WELCOME_JOKES = [
+  'somewhere, a landfill just shed a single tear.',
+  'your membership fee has been waived. it was £0. we’re very generous.',
+  'you now have the legal right to say "one person’s trash…" at parties.',
+  'the cables heard you joined. they’re untangling themselves in excitement.',
+  'welcome! your drawer of shame is already nervous.',
+]
+
 export const FOOTER_JOKES = [
   'no tech was harmed in the making of this handoff.',
   'proudly rehoming gadgets since about ten minutes ago.',

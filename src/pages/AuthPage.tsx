@@ -29,7 +29,7 @@ export default function AuthPage() {
         })
         if (error) throw error
         if (data.session) {
-          navigate(from)
+          navigate('/welcome', { state: { from } })
         } else {
           setNotice('Check your inbox to confirm your email — then come straight back. We’ll keep your seat warm.')
         }

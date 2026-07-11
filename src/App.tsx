@@ -4,6 +4,7 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import ListingDetail from './pages/ListingDetail'
 import AuthPage from './pages/AuthPage'
+import Welcome from './pages/Welcome'
 import NewListing from './pages/NewListing'
 import MessagesPage from './pages/MessagesPage'
 import MyListings from './pages/MyListings'
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/listing/:id" element={<ListingDetail />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/welcome" element={<Welcome />} />
         <Route path="/new" element={<NewListing />} />
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/messages/:id" element={<MessagesPage />} />
