@@ -9,6 +9,9 @@ export default function Footer() {
         handoff<span style={{ color: 'var(--blue)' }}>.</span>
       </div>
       <div className="fjoke">{joke}</div>
+      <div className="fjoke">
+        made by <strong>harry</strong> — fuelled by tea and one very chatty robot 🤖
+      </div>
       <div className="fjoke">© {new Date().getFullYear()} — free tech, freely given.</div>
     </footer>
   )
