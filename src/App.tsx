@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
 import Home from './pages/Home'
+import Browse from './pages/Browse'
 import ListingDetail from './pages/ListingDetail'
 import AuthPage from './pages/AuthPage'
 import Welcome from './pages/Welcome'
@@ -16,6 +17,7 @@ export default function App() {
       <Nav />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/browse" element={<Browse />} />
         <Route path="/listing/:id" element={<ListingDetail />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/welcome" element={<Welcome />} />

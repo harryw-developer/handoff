@@ -18,7 +18,7 @@ export default function Nav() {
       <div className="nav-inner">
         <Logo />
         <nav className="nav-links">
-          <NavLink to="/" end className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+          <NavLink to="/browse" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
             browse
           </NavLink>
           {session && (

@@ -200,7 +200,21 @@ export default function ChatThread({ conversation, me, onConversationUpdate, onB
 
       {confirmed ? (
         <div className="confirmed-banner">
-          🤝 handoff confirmed — {conv.delivery_method === 'post' ? 'watch the letterbox!' : `pickup: ${conv.pickup_location}`}
+          <span style={{ flex: 1 }}>
+            🤝 handoff confirmed — {conv.delivery_method === 'post' ? 'watch the letterbox!' : `pickup: ${conv.pickup_location}`}
+          </span>
+          {isGiver && (
+            <button
+              className="banner-cancel"
+              disabled={actionBusy}
+              onClick={() => {
+                if (window.confirm('Cancel this handoff and put the item back in the catalogue?'))
+                  rpc('cancel_handoff', { p_listing_id: conv.listing_id })
+              }}
+            >
+              ↩️ cancel
+            </button>
+          )}
         </div>
       ) : (
         <>

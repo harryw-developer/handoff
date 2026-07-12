@@ -1,39 +1,33 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import type { Category, Listing } from '../lib/types'
-import { CATEGORIES } from '../lib/types'
-import { EMPTY_CATALOGUE, HERO_TAGLINES, pick } from '../lib/jokes'
+import type { Listing } from '../lib/types'
+import { HERO_TAGLINES, pick } from '../lib/jokes'
 import ListingCard from '../components/ListingCard'
 import Marquee from '../components/Marquee'
 import Reveal from '../components/Reveal'
 import { useAuth } from '../context/AuthContext'
 
+const STEPS = [
+  { emoji: '📸', title: 'list it', joke: 'photograph the gadget. yes, even the dust. especially the dust.' },
+  { emoji: '💬', title: 'chat', joke: 'someone claims it. you exchange messages and possibly memes.' },
+  { emoji: '🤝', title: 'hand it off', joke: 'pickup or post — then bask in the glow of an empty drawer.' },
+]
+
 export default function Home() {
   const { session } = useAuth()
-  const [listings, setListings] = useState<Listing[]>([])
-  const [loading, setLoading] = useState(true)
-  const [cat, setCat] = useState<Category | 'all'>('all')
-  const [search, setSearch] = useState('')
+  const [fresh, setFresh] = useState<Listing[]>([])
   const tagline = useMemo(() => pick(HERO_TAGLINES), [])
-  const emptyJoke = useMemo(() => pick(EMPTY_CATALOGUE), [])
 
   useEffect(() => {
     supabase
       .from('listings')
-      .select('*')
+      .select('*, owner:profiles!listings_owner_id_fkey(*)')
+      .eq('status', 'available')
       .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setListings(data ?? [])
-        setLoading(false)
-      })
+      .limit(4)
+      .then(({ data }) => setFresh((data as Listing[]) ?? []))
   }, [])
-
-  const shown = listings.filter(
-    (l) =>
-      (cat === 'all' || l.category === cat) &&
-      (search.trim() === '' || (l.title + ' ' + (l.description ?? '')).toLowerCase().includes(search.toLowerCase())),
-  )
 
   return (
     <main>
@@ -49,67 +43,50 @@ export default function Home() {
           {tagline} give away the gadgets gathering dust — or grab something free from a fellow human. no money, no fuss, no landfill.
         </p>
         <div className="hero-actions">
-          <a href="#catalogue" className="btn blue">browse the goods ↓</a>
+          <Link to="/browse" className="btn blue">browse the catalogue →</Link>
           <Link to={session ? '/new' : '/auth'} className="btn ghost">give something away</Link>
         </div>
       </section>
 
       <Marquee />
 
-      <section className="page" id="catalogue">
+      <section className="page">
         <div className="section-head">
-          <h2>the catalogue</h2>
-          <span className="quip">no account needed to snoop. we respect the lurkers.</span>
+          <h2>fresh arrivals<span style={{ color: 'var(--blue)' }}>.</span></h2>
+          <Link to="/browse" className="see-all">see the whole catalogue →</Link>
         </div>
-
-        <div className="chips">
-          <button className={`chip${cat === 'all' ? ' on' : ''}`} onClick={() => setCat('all')}>
-            ✨ everything
-          </button>
-          {CATEGORIES.map((c) => (
-            <button key={c.id} className={`chip${cat === c.id ? ' on' : ''}`} onClick={() => setCat(c.id)} title={c.joke}>
-              {c.emoji} {c.label}
-            </button>
-          ))}
-          <input
-            type="search"
-            placeholder="search the pile…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              marginLeft: 'auto',
-              padding: '9px 16px',
-              borderRadius: 999,
-              border: '1.5px solid var(--line)',
-              background: 'var(--card)',
-              fontSize: '0.92rem',
-            }}
-          />
-        </div>
-
-        {loading ? (
-          <div className="grid">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="skeleton" />
-            ))}
-          </div>
-        ) : shown.length === 0 ? (
-          <div className="empty">
-            <div className="big">🕳️</div>
-            <p>{emptyJoke}</p>
-            <Link to={session ? '/new' : '/auth'} className="btn blue" style={{ marginTop: 12 }}>
-              be the first to give
-            </Link>
-          </div>
+        {fresh.length === 0 ? (
+          <p style={{ color: 'var(--ink-soft)', padding: '10px 0 30px' }}>
+            the shelves are momentarily bare — your old laptop could be famous here.
+          </p>
         ) : (
-          <div className="grid">
-            {shown.map((l, i) => (
-              <Reveal key={l.id} delay={(i % 4) * 60}>
+          <div className="grid" style={{ paddingBottom: 24 }}>
+            {fresh.map((l, i) => (
+              <Reveal key={l.id} delay={i * 70}>
                 <ListingCard listing={l} />
               </Reveal>
             ))}
           </div>
         )}
+      </section>
+
+      <section className="page" style={{ paddingBottom: 70 }}>
+        <div className="section-head">
+          <h2>how it works<span style={{ color: 'var(--blue)' }}>.</span></h2>
+          <span className="quip">three steps. zero pounds. one happier planet.</span>
+        </div>
+        <div className="steps">
+          {STEPS.map((s, i) => (
+            <Reveal key={s.title} delay={i * 90}>
+              <div className="step-card">
+                <div className="step-num">{i + 1}</div>
+                <div className="step-emoji">{s.emoji}</div>
+                <div className="step-title">{s.title}</div>
+                <p>{s.joke}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </section>
     </main>
   )

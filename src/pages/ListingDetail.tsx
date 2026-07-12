@@ -103,10 +103,57 @@ export default function ListingDetail() {
 
           {error && <div className="error-note">{error}</div>}
 
-          {listing.status === 'handed_off' ? (
+          {isOwner ? (
+            <div>
+              <p style={{ color: 'var(--ink-soft)' }}>
+                {listing.status === 'handed_off'
+                  ? 'this one’s been handed off — cancel below if the plan fell through.'
+                  : 'this is your listing — interested humans will appear in your messages.'}
+              </p>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {listing.status === 'handed_off' && (
+                  <button
+                    className="btn ghost"
+                    disabled={busy}
+                    onClick={async () => {
+                      if (!window.confirm('Put this back in the catalogue? The receiver will see the handoff was cancelled.')) return
+                      setBusy(true)
+                      setError(null)
+                      const { error: rpcErr } = await supabase.rpc('cancel_handoff', { p_listing_id: listing.id })
+                      if (rpcErr) setError(rpcErr.message)
+                      else setListing({ ...listing, status: 'available' })
+                      setBusy(false)
+                    }}
+                  >
+                    ↩️ put it back in the catalogue
+                  </button>
+                )}
+                <button
+                  className="btn danger"
+                  disabled={busy}
+                  onClick={async () => {
+                    if (!window.confirm(`Delete "${listing.title}" for good? Its chats go with it. No takebacks.`)) return
+                    setBusy(true)
+                    setError(null)
+                    const { error: delErr } = await supabase.from('listings').delete().eq('id', listing.id)
+                    if (delErr) {
+                      setError(delErr.message)
+                      setBusy(false)
+                    } else {
+                      if (listing.image_url) {
+                        const path = listing.image_url.split('/listings/')[1]
+                        if (path) await supabase.storage.from('listings').remove([decodeURIComponent(path)])
+                      }
+                      navigate('/mine')
+                    }
+                  }}
+                >
+                  🗑 delete listing
+                </button>
+              </div>
+            </div>
+          ) : listing.status === 'handed_off' ? (
             <p style={{ color: 'var(--ink-soft)' }}>this one found its person. the drawer of shame grows lighter.</p>
-          ) : isOwner ? (
-            <p style={{ color: 'var(--ink-soft)' }}>this is your listing — interested humans will appear in your messages.</p>
           ) : (
             <button className="btn blue" onClick={startChat} disabled={busy}>
               {busy ? 'opening the chat…' : session ? '💬 message the giver' : 'sign in to claim it'}
